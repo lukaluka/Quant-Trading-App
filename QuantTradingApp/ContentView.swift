@@ -6,6 +6,7 @@ struct ContentView: View {
     @State private var response: String = ""
     @State private var symbol: String = "AAPL"
     @State private var priceText: String = ""
+    @State private var analysisText: String = ""
 
     var body: some View {
         NavigationView {
@@ -37,11 +38,25 @@ struct ContentView: View {
                             }
                         }
                     }
+                    Button("Analyze") {
+                        agent.analyzeMovingAverage(symbol: symbol) { result in
+                            switch result {
+                            case .success(let text):
+                                analysisText = text
+                            case .failure(let error):
+                                analysisText = error.localizedDescription
+                            }
+                        }
+                    }
                 }
                 .padding(.bottom)
 
                 if !priceText.isEmpty {
                     Text("Latest price for \(symbol): \(priceText)")
+                        .padding(.bottom)
+                }
+                if !analysisText.isEmpty {
+                    Text(analysisText)
                         .padding(.bottom)
                 }
 
